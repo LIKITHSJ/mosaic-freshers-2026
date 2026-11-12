@@ -751,10 +751,36 @@ button {
     max-width: none !important;
   }
 
-  .slide-title {
-    font-size: 52px;
-    margin-bottom: 14px;
-  }
+  /* Better text spacing on mobile */
+.slide-title {
+  font-size: clamp(40px, 11vw, 48px);
+  line-height: 1.15;
+  margin-bottom: 22px;
+  letter-spacing: 1px;
+}
+
+/* Jai Sri Gurudev heading */
+#slide-1 .eyebrow {
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Welcome slide description spacing */
+#slide-1 .desc-row {
+  gap: 12px;
+}
+
+/* RSVP heading and form spacing */
+#slide-3 .slide-title {
+  margin-bottom: 24px;
+}
+
+#slide-3 .fade {
+  margin-top: 10px;
+  line-height: 1.6;
+}
 
   #slide-1 .slide-title,
   #slide-1 .eyebrow,
@@ -839,11 +865,18 @@ button {
   50% { transform: translateY(5px); }
 }
 
-@media (max-width: 760px) {
-  .scroll-down-btn {
-    right: 20px;
-    bottom: 20px;
-  }
+/* Smaller scroll button on mobile */
+.scroll-down-btn {
+  right: 16px;
+  bottom: 18px;
+  padding: 9px 14px;
+  gap: 7px;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+}
+
+.scroll-down-btn span {
+  font-size: 14px;
 }
 </style>
 </head>
