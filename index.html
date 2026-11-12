@@ -800,6 +800,47 @@ button {
     width: calc(100% - 32px);
   }
 }
+
+.scroll-down-btn {
+  position: fixed;
+  right: 40px;
+  bottom: 32px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 50px;
+  background: rgba(0,0,0,.65);
+  color: #fff;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background .25s, transform .25s, opacity .25s;
+}
+
+.scroll-down-btn span {
+  font-size: 18px;
+  animation: arrowBounce 1s infinite;
+}
+
+.scroll-down-btn:hover {
+  background: rgba(255,255,255,.18);
+  transform: translateY(-4px);
+}
+
+@keyframes arrowBounce {
+  50% { transform: translateY(5px); }
+}
+
+@media (max-width: 760px) {
+  .scroll-down-btn {
+    right: 20px;
+    bottom: 20px;
+  }
+}
 </style>
 </head>
 
@@ -1858,7 +1899,7 @@ function scrollToFrac(f) {
   const max = document.documentElement.scrollHeight - innerHeight;
   const start = window.scrollY;
   const end = max * f;
-  const duration = 600; // milliseconds
+  const duration = 300; // milliseconds
 
   const startTime = performance.now();
 
@@ -1875,22 +1916,24 @@ function scrollToFrac(f) {
 
   requestAnimationFrame(animateScroll);
 }
-document.querySelectorAll('.nav-link').forEach((l, i) => {
+document.querySelectorAll('.nav-link').forEach((l, i) =>
+  l.addEventListener('click', e => { e.preventDefault(); scrollToFrac(targetScrolls[i]); }));
 
-  l.addEventListener('click', e => {
+$('rsvpTop').addEventListener('click', e => { e.preventDefault(); scrollToFrac(0.62); });
 
-    e.preventDefault();
-    scrollToFrac(targetScrolls[i]);
+// SCROLL DOWN BUTTON
+const scrollDownBtn = document.getElementById('scrollDownBtn');
 
-  });
+scrollDownBtn.addEventListener('click', () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const current = window.scrollY / max;
 
-});
+  const nextSections = [0.34, 0.62, 0.94];
+  const next = nextSections.find(point => point > current + 0.03);
 
-$('rsvpTop').addEventListener('click', e => {
-
-  e.preventDefault();
-  scrollToFrac(0.62);
-
+  if (next !== undefined) {
+    scrollToFrac(next);
+  }
 });
 
 /* ---------- COUNTDOWN ---------- */
@@ -2238,5 +2281,8 @@ onWindowResize();
 animate();
 
 </script>
+<button id="scrollDownBtn" class="scroll-down-btn">
+  SCROLL DOWN <span>↓</span>
+</button>
 </body>
 </html>
