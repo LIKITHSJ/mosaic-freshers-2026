@@ -1855,17 +1855,26 @@ function animate() {
 const targetScrolls = [0.0, 0.34, 0.62, 0.94];
 
 function scrollToFrac(f) {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const start = window.scrollY;
+  const end = max * f;
+  const duration = 600; // milliseconds
 
-  const max =
-    document.documentElement.scrollHeight - innerHeight;
+  const startTime = performance.now();
 
-  scrollTo({
-    top: max * f,
-    behavior: 'smooth'
-  });
+  function animateScroll(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
 
+    window.scrollTo(0, start + (end - start) * eased);
+
+    if (progress < 1) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  requestAnimationFrame(animateScroll);
 }
-
 document.querySelectorAll('.nav-link').forEach((l, i) => {
 
   l.addEventListener('click', e => {
