@@ -2130,14 +2130,14 @@ async function saveAnswer(name, answer) {
 
   /* Store attendee registration */
 
-  await D.push(
-    D.ref(db, "registrations"),
-    {
-      name,
-      answer,
-      timestamp: Date.now()
-    }
-  );
+ await D.push(
+  D.ref(db, "registrations"),
+  {
+    name,
+    answer,
+    ts: Date.now()
+  }
+);
 
 }
 
