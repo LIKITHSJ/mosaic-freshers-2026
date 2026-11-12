@@ -825,7 +825,11 @@ button {
   font-size: 18px;
   animation: arrowBounce 1s infinite;
 }
-
+.scroll-down-btn.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 .scroll-down-btn:hover {
   background: rgba(255,255,255,.18);
   transform: translateY(-4px);
@@ -1747,6 +1751,12 @@ function updateSlides(scroll) {
   $('slide-4').classList.toggle(
     'active',
     on(scroll, 0.82, 1.05)
+  );
+
+  // Hide scroll button on the last section and during poster reveal
+  $('scrollDownBtn').classList.toggle(
+    'is-hidden',
+    scroll >= 0.82 || $('reveal').classList.contains('show')
   );
 
 }
