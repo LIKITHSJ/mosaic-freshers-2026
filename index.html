@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOSAIC 2026 · Freshers' Day</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Outfit:wght@300;400;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+html, body { width: 100%; background: #000; -ms-overflow-style: none; scrollbar-width: none; }
+body { min-height: 600vh; font-family: 'Outfit', sans-serif; color: #fff; overflow-x: hidden; cursor: none; }
+* { cursor: none !important; }
+::-webkit-scrollbar { display: none; width: 0; }
+
+#webgl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; outline: none; }
+
+/* dark gradient so text is always readable */
+.scrim {
+  position: fixed; inset: 0; z-index: 3; pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.65) 30%, rgba(0,0,0,0) 62%),
+    linear-gradient(to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,0) 18%);
+}
+
+/* cursor */
+.cursor-inner, .cursor-outer {
+  position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none;
+  will-change: transform;
+}
+.cursor-inner { width: 6px; height: 6px; margin: -3px 0 0 -3px; border: 2px solid #fff; z-index: 9999; }
+.cursor-outer { width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 1.5px solid rgba(255,255,255,.7); z-index: 9998; }
+@media (hover: none) {
+  .cursor-inner, .cursor-outer { display: none; }
+  body, * { cursor: auto !important; }
+}
+
+/* overlay */
+.cinematic-container {
+  position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 0 60px 40px 60px;
+}
+.main-header { display: flex; justify-content: space-between; align-items: center; width: 100%; pointer-events: auto; padding: 20px 0; }
+.brand { font-size: 14px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 2px 12px #000; }
+.header-nav { display: flex; align-items: center; gap: 24px; }
+.nav-link { color: #fff; text-decoration: none; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; text-shadow: 0 2px 10px #000; }
+.nav-dot { width: 3px; height: 3px; background: rgba(255,255,255,.4); border-radius: 50%; }
+
+/* slides */
+.slide { position: absolute; bottom: 12%; pointer-events: none; }
+.slide-title {
+  font-family: 'Italiana', serif;
+  font-size: clamp(48px, 8vw, 116px);
+  line-height: 1; font-weight: 400; letter-spacing: 2px;
+  margin-bottom: 20px; color: #fff;
+  text-shadow: 0 4px 30px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8);
+}
+.slide-desc {
+  font-size: 17px; line-height: 1.7; font-weight: 400; color: #fff; letter-spacing: .5px;
+  text-shadow: 0 2px 14px rgba(0,0,0,.95), 0 0 3px rgba(0,0,0,.8);
+  opacity: 0; transform: translateY(30px); will-change: transform, opacity;
+  transition: opacity .8s cubic-bezier(.25,1,.5,1) .4s, transform .8s cubic-bezier(.25,1,.5,1) .4s;
+}
+.slide.active .slide-desc { opacity: 1; transform: translateY(0); }
+.slide-title .char {
+  display: inline-block; opacity: 0; transform: translateY(40px); will-change: transform, opacity;
+  transition: opacity .7s cubic-bezier(.25,1,.5,1), transform .7s cubic-bezier(.25,1,.5,1);
+}
+.slide.active .slide-title .char { opacity: 1; transform: translateY(0); }
+.eyebrow {
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #ffd9a0;
+  margin-bottom: 14px; font-weight: 600; text-shadow: 0 2px 12px #000;
+}
+
+#slide-1 { left: 0; width: 100%; }
+#slide-1 .slide-title, #slide-1 .eyebrow { margin-left: 60px; }
+#slide-1 .desc-row { position: relative; display: flex; width: 100%; }
+#slide-1 .col-1 { margin-left: 60px; width: calc(25vw - 60px); min-width: 240px; }
+#slide-1 .col-2 { position: absolute; left: calc(25vw + 40px); width: calc(25vw - 20px); min-width: 240px; }
+
+#slide-2 { left: calc(25vw + 40px); width: calc(50vw - 60px); }
+#slide-3 { left: calc(50vw + 20px); width: calc(50vw - 80px); }
+#slide-3 .slide-title { white-space: nowrap; }
+
+/* grid */
+.story-dashes { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); display: flex; flex-direction: column; gap: 12px; }
+.story-dash { width: 2px; height: 40px; background: rgba(255,255,255,.2); border-radius: 2px; overflow: hidden; }
+.story-dash-fill { width: 100%; height: 100%; background: #fff; transform: scaleY(0); transform-origin: top; will-change: transform; }
+.grid-horizontal-line { position: fixed; top: 70px; left: 0; right: 0; height: 1px; background: rgba(255,255,255,.15); z-index: 5; pointer-events: none; }
+.grid-lines { position: fixed; top: 0; left: 40px; right: 40px; height: 100vh; display: flex; justify-content: space-between; z-index: 5; pointer-events: none; }
+.grid-line { position: relative; width: 1px; height: 100%; background: rgba(255,255,255,.15); }
+.grid-line:nth-child(3) { margin-top: 70px; height: calc(100vh - 70px); }
+.grid-dot { position: absolute; top: 0; left: 0; margin-left: -3px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.4); will-change: transform; }
+
+@media (max-width: 760px) {
+  .cinematic-container { padding: 0 24px 24px; }
+  .header-nav { display: none; }
+  .slide { bottom: 7%; left: 24px !important; width: calc(100% - 48px) !important; }
+  .slide-title { font-size: 52px; margin-bottom: 14px; }
+  #slide-1 .slide-title, #slide-1 .eyebrow, #slide-1 .col-1 { margin-left: 0 !important; }
+  #slide-1 .desc-row { flex-direction: column; }
+  #slide-1 .col-1, #slide-1 .col-2 { position: static; width: 100%; min-width: 0; }
+  .slide-desc { font-size: 15px; }
+  .grid-line:nth-child(2), .grid-line:nth-child(4) { display: none; }
+  .grid-lines { left: 16px; right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-inner" id="ci"></div>
+<div class="cursor-outer" id="co"></div>
+
+<div class="scrim"></div>
+
+<div class="cinematic-container">
+  <div class="main-header">
+    <div class="brand">Mosaic</div>
+    <nav class="header-nav">
+      <a href="#" class="nav-link">Home</a><span class="nav-dot"></span>
+      <a href="#" class="nav-link">Theme</a><span class="nav-dot"></span>
+      <a href="#" class="nav-link">Date &amp; Venue</a>
+    </nav>
+    <div></div>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <div class="eyebrow">|| Jai Sri Gurudev || · Freshers’ Day</div>
+    <h2 class="slide-title">Mosaic <br>2026</h2>
+    <div class="desc-row">
+      <p class="slide-desc col-1">Adichunchanagiri University</p>
+      <p class="slide-desc col-2">Faculty of Commerce &amp; Management<br>Department of Management Studies</p>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-2">
+    <h2 class="slide-title">Different <br>Stories</h2>
+    <p class="slide-desc">One Beautiful Journey.</p>
+  </div>
+
+  <div class="slide" id="slide-3">
+    <div class="eyebrow">Freshers’ Day · Save the date</div>
+    <h2 class="slide-title">14-11-2026</h2>
+    <p class="slide-desc">BGSIT Seminar Hall</p>
+  </div>
+</div>
+
+<div class="grid-horizontal-line"></div>
+<div class="grid-lines">
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line">
+    <div class="grid-dot"></div><div class="grid-dot"></div>
+    <div class="story-dashes">
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-1"></div></div>
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-2"></div></div>
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-3"></div></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="webgl"></canvas>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const $ = id => document.getElementById(id);
+const COLORS = ["#f5a400","#b84fd1","#1f9bd6","#d6479b","#3cb054","#f2711c"];
+const PR = Math.min(devicePixelRatio, 1.5);          // pixel ratio cap = big speed-up
+const isMobile = () => innerWidth < 760;
+
+/* ---------- split titles into letters ---------- */
+document.querySelectorAll('.slide-title').forEach(title => {
+  const parts = title.innerHTML.split(/(<br\s*\/?>)/i);
+  let html = '', n = 0;
+  parts.forEach(part => {
+    if (part.toLowerCase().startsWith('<br')) { html += part; return; }
+    for (const ch of part) {
+      if (ch === ' ') html += ' ';
+      else { html += `<span class="char" style="transition-delay:${n * 0.035}s">${ch}</span>`; n++; }
+    }
+  });
+  title.innerHTML = html;
+});
+
+/* ---------- renderer / scene / camera ---------- */
+const canvas = $('webgl');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#000000');
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.2, 3.0);
+scene.add(camera);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+renderer.setPixelRatio(PR);
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.6;                  // no shadows = much lighter
+
+/* ---------- lights (no shadow maps) ---------- */
+scene.add(new THREE.AmbientLight('#ffffff', 0.35));
+const key = new THREE.DirectionalLight('#ffffff', 4.0); key.position.set(4, 6, 3); scene.add(key);
+const rim = new THREE.DirectionalLight('#e3f2ff', 5.0); rim.position.set(-5, 3, -4); scene.add(rim);
+const fill = new THREE.DirectionalLight('#fff3e6', 0.8); fill.position.set(-2, -4, 2); scene.add(fill);
+
+/* ---------- background wave shader (lighter version) ---------- */
+const U = {
+  uTime: { value: 0 },
+  uResolution: { value: new THREE.Vector2(innerWidth * PR, innerHeight * PR) },
+  uMouse: { value: new THREE.Vector2() },
+  uScroll: { value: 0 }
+};
+const bg = new THREE.Mesh(
+  new THREE.PlaneGeometry(30, 30),
+  new THREE.ShaderMaterial({
+    uniforms: U, depthWrite: false, depthTest: false,
+    vertexShader: `void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `
+      uniform float uTime; uniform vec2 uResolution; uniform vec2 uMouse; uniform float uScroll;
+      void main(){
+        vec2 uv = (gl_FragCoord.xy - 0.5*uResolution.xy) / uResolution.y;
+        float time = uTime*0.08, s = uScroll, sd = s*5.0;
+        vec2 w = uv;
+        w.x += sin(uv.y*2.5 + time*0.2 + sd)*0.35;
+        w.y += cos(uv.x*2.5 - time*0.15 - sd*0.8)*0.35;
+        w += vec2(s*0.04, -s*0.02) + uMouse*0.05;
+        float w1 = sin(dot(w, vec2(0.825,0.565))*2.4 + time);
+        float w2 = cos(dot(w, vec2(0.765,-0.644))*3.2 - time*1.4 + w1*0.4);
+        float f = w1*0.6 + w2*0.4;
+        float a = max(0.0, 1.0 - abs(f-0.12));
+        float a2 = a*a, a4 = a2*a2, a8 = a4*a4;
+        float crest = a2*0.5 + a8*0.9;
+
+        vec3 s0 = vec3(0.001,0.0006,0.0004), b0 = vec3(0.085,0.040,0.015), d0 = vec3(0.050,0.022,0.008), c0 = vec3(0.45,0.30,0.18);
+        vec3 s1 = vec3(0.0006,0.0004,0.0012), b1 = vec3(0.035,0.020,0.070), d1 = vec3(0.018,0.010,0.045), c1 = vec3(0.32,0.22,0.58);
+        float t = smoothstep(0.0,1.0,s);
+        vec3 col = mix(s0,s1,t);
+        col = mix(col, mix(d0,d1,t), smoothstep(-0.6,0.2,f));
+        col = mix(col, mix(b0,b1,t), smoothstep(0.0,0.8,f));
+        col += mix(c0,c1,t) * crest * 1.1;
+        col *= 1.0 - dot(uv,uv)*0.12;
+        gl_FragColor = vec4(col,1.0);
+      }`
+  })
+);
+bg.position.set(0, 0, -8); bg.renderOrder = -10;
+camera.add(bg);
+
+/* ---------- mosaic centrepiece ---------- */
+const pivot = new THREE.Group(); scene.add(pivot);
+const geo = new THREE.IcosahedronGeometry(1.15, 1).toNonIndexed();
+const cnt = geo.attributes.position.count;
+const colArr = new Float32Array(cnt * 3), tc = new THREE.Color();
+for (let f = 0; f < cnt / 3; f++) {
+  tc.set(COLORS[Math.floor(Math.random() * 6)]);
+  for (let v = 0; v < 3; v++) { const i = (f*3+v)*3; colArr[i]=tc.r; colArr[i+1]=tc.g; colArr[i+2]=tc.b; }
+}
+geo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
+geo.computeVertexNormals();
+const core = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4, metalness: 0.5, flatShading: true }));
+pivot.add(core);
+
+const tiles = new THREE.Group();
+const tileGeo = new THREE.BoxGeometry(0.2, 0.2, 0.05);
+for (let i = 0; i < 28; i++) {
+  const a = (i / 28) * Math.PI * 2;
+  const m = new THREE.Mesh(tileGeo, new THREE.MeshStandardMaterial({ color: COLORS[i % 6], roughness: 0.4, metalness: 0.5 }));
+  m.position.set(Math.cos(a)*2.0, Math.sin(a*3)*0.12, Math.sin(a)*2.0);
+  m.lookAt(0, 0, 0);
+  tiles.add(m);
+}
+tiles.rotation.x = 0.35;
+pivot.add(tiles);
+pivot.position.y = -0.1;
+
+/* ---------- sparks (200) ---------- */
+const SC = 200, sd = [];
+const sPos = new Float32Array(SC * 3), sCol = new Float32Array(SC * 3);
+for (let i = 0; i < SC; i++) {
+  sPos[i*3] = (Math.random()-.5)*6.5; sPos[i*3+1] = (Math.random()-.5)*5-.5; sPos[i*3+2] = (Math.random()-.5)*6.5;
+  tc.set(COLORS[Math.floor(Math.random()*6)]);
+  sCol[i*3]=tc.r; sCol[i*3+1]=tc.g; sCol[i*3+2]=tc.b;
+  sd.push({ vx:(Math.random()-.5)*.4, vy:.15+Math.random()*.3, vz:(Math.random()-.5)*.4, ss:.5+Math.random()*1.5, sr:.05+Math.random()*.15, ph:Math.random()*6.28 });
+}
+const sg = new THREE.BufferGeometry();
+sg.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+sg.setAttribute('color', new THREE.BufferAttribute(sCol, 3));
+const tex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 16;
+  const x = c.getContext('2d'), g = x.createRadialGradient(8,8,0,8,8,8);
+  g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.25,'rgba(255,255,255,.85)');
+  g.addColorStop(.6,'rgba(255,255,255,.3)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0,0,16,16); return new THREE.CanvasTexture(c);
+})();
+scene.add(new THREE.Points(sg, new THREE.PointsMaterial({
+  size: 0.03, vertexColors: true, transparent: true, opacity: 0.8,
+  blending: THREE.AdditiveBlending, depthWrite: false, map: tex
+})));
+
+/* ---------- pointer / resize ---------- */
+let mx = 0, my = 0, tmx = 0, tmy = 0;
+let cx = innerWidth/2, cy = innerHeight/2, ox = cx, oy = cy;
+const ci = $('ci'), co = $('co');
+addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  ci.style.transform = `translate3d(${cx}px,${cy}px,0)`;
+  tmx = (e.clientX / innerWidth) * 2 - 1;
+  tmy = (e.clientY / innerHeight) * 2 - 1;
+}, { passive: true });
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  U.uResolution.value.set(innerWidth * PR, innerHeight * PR);
+});
+
+/* ---------- slides + grid (transform-only, cached) ---------- */
+const s1 = $('slide-1'), s2 = $('slide-2'), s3 = $('slide-3');
+const fills = [1,2,3].map(i => $('dash-fill-' + i));
+const dots = [...document.querySelectorAll('.grid-dot')];
+const lastFill = [-1,-1,-1];
+const on = (v, a, b) => v >= a && v <= b;
+
+function updateUI(sc) {
+  for (let i = 0; i < 3; i++) {
+    const p = Math.max(0, Math.min(1, (sc - i/3) * 3));
+    const q = Math.round(p * 200) / 200;
+    if (q !== lastFill[i]) { lastFill[i] = q; fills[i].style.transform = `scaleY(${q})`; }
+  }
+  s1.classList.toggle('active', on(sc, -0.1, 0.27));
+  s2.classList.toggle('active', on(sc, 0.36, 0.62));
+  s3.classList.toggle('active', on(sc, 0.72, 1.05));
+  for (let i = 0; i < dots.length; i++) {
+    const start = (i * 17) % 80 + 10;
+    let speed = 90 + (i * 55) % 180; if (i % 2 === 0) speed = -speed;
+    let y = start + sc * speed; y = ((y % 100) + 100) % 100;
+    dots[i].style.transform = `translate3d(0,${y}vh,0)`;
+  }
+}
+
+/* ---------- nav ---------- */
+const targets = [0.0, 0.5, 0.95];
+document.querySelectorAll('.nav-link').forEach((l, i) => l.addEventListener('click', e => {
+  e.preventDefault();
+  scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) * targets[i], behavior: 'smooth' });
+}));
+
+/* ---------- loop ---------- */
+const clock = new THREE.Clock();
+const camTarget = new THREE.Vector3(), lookAt = new THREE.Vector3();
+let currentScroll = 0, running = true;
+document.addEventListener('visibilitychange', () => {
+  running = !document.hidden;
+  if (running) { clock.getDelta(); animate(); }
+});
+
+function animate() {
+  if (!running) return;
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const target = max > 0 ? scrollY / max : 0;
+  currentScroll += (target - currentScroll) * 0.05;
+
+  mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
+  ox += (cx - ox) * 0.2;   oy += (cy - oy) * 0.2;
+  co.style.transform = `translate3d(${ox}px,${oy}px,0)`;
+
+  pivot.rotation.y = mx * 0.25;
+  pivot.rotation.x = my * 0.15;
+  core.rotation.y += dt * 0.18;
+  core.rotation.x += dt * 0.07;
+  tiles.rotation.y -= dt * 0.25;
+
+  const vel = Math.abs(target - currentScroll);
+  const mul = 1 + vel * 9, sway0 = 1 + vel * 3.2;
+  const p = sg.attributes.position.array;
+  for (let i = 0; i < SC; i++) {
+    const k = i*3, d = sd[i];
+    p[k]   += d.vx * dt * mul + Math.sin(t * d.ss + d.ph) * d.sr * sway0 * dt;
+    p[k+1] += d.vy * dt * mul;
+    p[k+2] += d.vz * dt * mul + Math.cos(t * d.ss + d.ph) * d.sr * sway0 * dt;
+    if (p[k+1] > 3 || Math.abs(p[k]) > 3.5 || Math.abs(p[k+2]) > 3.5) {
+      p[k+1] = -2.5; p[k] = (Math.random()-.5)*3; p[k+2] = (Math.random()-.5)*3;
+    }
+  }
+  sg.attributes.position.needsUpdate = true;
+
+  // camera orbit
+  const phi = currentScroll * Math.PI * 2;
+  const y = 0.35 + Math.sin(currentScroll * Math.PI) * 0.8;
+  const r = 4.2 - Math.sin(currentScroll * Math.PI) * 0.6;
+  camTarget.set(r * Math.sin(phi), y, r * Math.cos(phi));
+  camera.position.lerp(camTarget, 0.05);
+
+  // keep the object up/right so it never sits under the text
+  const tp = Math.min(1, currentScroll / 0.28);
+  const ease = (Math.cos(tp * Math.PI) + 1) * 0.5;
+  if (isMobile()) lookAt.set(0, -1.0, 0);
+  else lookAt.set(-0.9 * ease - 0.5, -0.9, 0);
+  camera.lookAt(lookAt);
+
+  U.uTime.value = t;
+  U.uMouse.value.set(mx, -my);
+  U.uScroll.value = currentScroll;
+
+  updateUI(currentScroll);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
+</body>
+</html>
