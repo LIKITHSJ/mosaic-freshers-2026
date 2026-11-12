@@ -1,424 +1,2233 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MOSAIC 2026 · Freshers' Day</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Outfit:wght@300;400;600&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-html, body { width: 100%; background: #000; -ms-overflow-style: none; scrollbar-width: none; }
-body { min-height: 600vh; font-family: 'Outfit', sans-serif; color: #fff; overflow-x: hidden; cursor: none; }
+
+html, body {
+  width: 100%;
+  background: #000;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+body {
+  min-height: 900vh;
+  font-family: 'Outfit', sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  cursor: none;
+}
+
 * { cursor: none !important; }
 ::-webkit-scrollbar { display: none; width: 0; }
+input { user-select: text; }
 
-#webgl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; outline: none; }
+#webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  outline: none;
+}
 
-/* dark gradient so text is always readable */
+#fx {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
 .scrim {
-  position: fixed; inset: 0; z-index: 3; pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
   background:
-    linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.65) 30%, rgba(0,0,0,0) 62%),
-    linear-gradient(to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,0) 18%);
+    linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.58) 30%, rgba(0,0,0,0) 65%),
+    linear-gradient(to bottom, rgba(0,0,0,.48) 0%, rgba(0,0,0,0) 20%);
 }
 
-/* cursor */
-.cursor-inner, .cursor-outer {
-  position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none;
-  will-change: transform;
+/* ---------- cursor ---------- */
+
+.cursor-inner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
 }
-.cursor-inner { width: 6px; height: 6px; margin: -3px 0 0 -3px; border: 2px solid #fff; z-index: 9999; }
-.cursor-outer { width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 1.5px solid rgba(255,255,255,.7); z-index: 9998; }
+
+.cursor-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(255,255,255,.7);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+}
+
 @media (hover: none) {
   .cursor-inner, .cursor-outer { display: none; }
   body, * { cursor: auto !important; }
 }
 
-/* overlay */
+/* ---------- overlay ---------- */
+
 .cinematic-container {
-  position: fixed; inset: 0; z-index: 10; pointer-events: none;
-  display: flex; flex-direction: column; justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 0 60px 40px 60px;
 }
-.main-header { display: flex; justify-content: space-between; align-items: center; width: 100%; pointer-events: auto; padding: 20px 0; }
-.brand { font-size: 14px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 2px 12px #000; }
-.header-nav { display: flex; align-items: center; gap: 24px; }
-.nav-link { color: #fff; text-decoration: none; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; text-shadow: 0 2px 10px #000; }
-.nav-dot { width: 3px; height: 3px; background: rgba(255,255,255,.4); border-radius: 50%; }
 
-/* slides */
-.slide { position: absolute; bottom: 12%; pointer-events: none; }
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  z-index: 20;
+  pointer-events: auto;
+  padding: 20px 0;
+}
+
+.brand {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0,0,0,.95);
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-shadow: 0 2px 10px rgba(0,0,0,.98);
+}
+
+.nav-dot {
+  width: 3px;
+  height: 3px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #fff;
+  color: #000;
+  text-decoration: none;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: transform .3s, background .3s;
+}
+
+.btn-circle {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #000;
+  border-radius: 50%;
+}
+
+.contact-btn:hover {
+  transform: scale(1.05);
+  background: #f0f0f0;
+}
+
+/* ---------- slides ---------- */
+
+.slide {
+  position: absolute;
+  bottom: 12%;
+  pointer-events: none;
+}
+
+.slide.active { pointer-events: auto; }
+
 .slide-title {
   font-family: 'Italiana', serif;
-  font-size: clamp(48px, 8vw, 116px);
-  line-height: 1; font-weight: 400; letter-spacing: 2px;
-  margin-bottom: 20px; color: #fff;
-  text-shadow: 0 4px 30px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8);
+  font-size: clamp(52px, 8vw, 116px);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 0 4px 30px rgba(0,0,0,.95);
 }
-.slide-desc {
-  font-size: 17px; line-height: 1.7; font-weight: 400; color: #fff; letter-spacing: .5px;
-  text-shadow: 0 2px 14px rgba(0,0,0,.95), 0 0 3px rgba(0,0,0,.8);
-  opacity: 0; transform: translateY(30px); will-change: transform, opacity;
-  transition: opacity .8s cubic-bezier(.25,1,.5,1) .4s, transform .8s cubic-bezier(.25,1,.5,1) .4s;
+
+.slide-desc, .fade {
+  font-size: 17px;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: .5px;
+  text-shadow: 0 2px 14px rgba(0,0,0,.98), 0 0 3px rgba(0,0,0,.9);
+  opacity: 0;
+  transform: translateY(30px);
+  will-change: transform, opacity;
+  transition:
+    opacity .8s cubic-bezier(.25,1,.5,1),
+    transform .8s cubic-bezier(.25,1,.5,1);
+  transition-delay: .4s;
 }
-.slide.active .slide-desc { opacity: 1; transform: translateY(0); }
+
+.slide.active .slide-desc,
+.slide.active .fade {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .slide-title .char {
-  display: inline-block; opacity: 0; transform: translateY(40px); will-change: transform, opacity;
-  transition: opacity .7s cubic-bezier(.25,1,.5,1), transform .7s cubic-bezier(.25,1,.5,1);
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(50px);
+  transition:
+    opacity .7s cubic-bezier(.25,1,.5,1),
+    transform .7s cubic-bezier(.25,1,.5,1);
 }
-.slide.active .slide-title .char { opacity: 1; transform: translateY(0); }
+
+.slide.active .slide-title .char {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .eyebrow {
-  font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #ffd9a0;
-  margin-bottom: 14px; font-weight: 600; text-shadow: 0 2px 12px #000;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ffd9a0;
+  margin-bottom: 14px;
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0,0,0,.98);
 }
+
+/* slide 1 */
 
 #slide-1 { left: 0; width: 100%; }
-#slide-1 .slide-title, #slide-1 .eyebrow { margin-left: 60px; }
-#slide-1 .desc-row { position: relative; display: flex; width: 100%; }
-#slide-1 .col-1 { margin-left: 60px; width: calc(25vw - 60px); min-width: 240px; }
-#slide-1 .col-2 { position: absolute; left: calc(25vw + 40px); width: calc(25vw - 20px); min-width: 240px; }
 
-#slide-2 { left: calc(25vw + 40px); width: calc(50vw - 60px); }
-#slide-3 { left: calc(50vw + 20px); width: calc(50vw - 80px); }
-#slide-3 .slide-title { white-space: nowrap; }
+#slide-1 .slide-title,
+#slide-1 .eyebrow {
+  margin-left: 60px;
+}
 
-/* grid */
-.story-dashes { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); display: flex; flex-direction: column; gap: 12px; }
-.story-dash { width: 2px; height: 40px; background: rgba(255,255,255,.2); border-radius: 2px; overflow: hidden; }
-.story-dash-fill { width: 100%; height: 100%; background: #fff; transform: scaleY(0); transform-origin: top; will-change: transform; }
-.grid-horizontal-line { position: fixed; top: 70px; left: 0; right: 0; height: 1px; background: rgba(255,255,255,.15); z-index: 5; pointer-events: none; }
-.grid-lines { position: fixed; top: 0; left: 40px; right: 40px; height: 100vh; display: flex; justify-content: space-between; z-index: 5; pointer-events: none; }
-.grid-line { position: relative; width: 1px; height: 100%; background: rgba(255,255,255,.15); }
-.grid-line:nth-child(3) { margin-top: 70px; height: calc(100vh - 70px); }
-.grid-dot { position: absolute; top: 0; left: 0; margin-left: -3px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.4); will-change: transform; }
+#slide-1 .desc-row {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+#slide-1 .col-1 {
+  margin-left: 60px;
+  width: calc(25vw - 60px);
+  max-width: calc(25vw - 60px);
+  min-width: 240px;
+}
+
+#slide-1 .col-2 {
+  position: absolute;
+  left: calc(25vw + 40px);
+  width: calc(25vw - 60px);
+  max-width: calc(25vw - 60px);
+  min-width: 240px;
+}
+
+/* slide 2 */
+
+#slide-2 { left: 0; width: 100%; }
+
+#slide-2 .slide-title {
+  margin-left: calc(25vw + 40px);
+}
+
+.s2-body {
+  margin-left: calc(50vw + 20px);
+  width: max(260px, calc(25vw - 60px));
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.chip {
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.35);
+  color: #fff;
+}
+
+/* ---------- countdown ---------- */
+
+#cd-panel {
+  position: fixed;
+  top: 90px;
+  left: 60px;
+  z-index: 4;
+  pointer-events: none;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(10,10,10,.72);
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  transition:
+    clip-path 1.8s cubic-bezier(.16,1,.3,1),
+    opacity .8s ease;
+}
+
+#cd-panel.active {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+#cd-panel .lbl {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #f5c98a;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.cd {
+  display: flex;
+  gap: 10px;
+}
+
+.cd div {
+  min-width: 58px;
+  text-align: center;
+}
+
+.cd b {
+  display: block;
+  font-family: 'Italiana', serif;
+  font-size: 40px;
+  font-weight: 400;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd small {
+  font-size: 9px;
+  letter-spacing: 3px;
+  opacity: .6;
+}
+
+.cd-done {
+  font-family: 'Italiana', serif;
+  font-size: 26px;
+  color: #fff;
+}
+
+/* ---------- slide 3: RSVP ---------- */
+
+#slide-3 {
+  left: calc(50vw + 20px);
+  width: min(380px, 40vw);
+}
+
+#slide-3 input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 14px;
+  outline: none;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.3);
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  transition: border-color .3s, background .3s;
+}
+
+#slide-3 input::placeholder {
+  color: rgba(255,255,255,.45);
+}
+
+#slide-3 input:focus {
+  border-color: #fff;
+  background: rgba(255,255,255,.1);
+}
+
+#slide-3 input:disabled { opacity: .5; }
+
+.shake { animation: shake .5s; }
+
+@keyframes shake {
+  20%,60% { transform: translateX(-10px); }
+  40%,80% { transform: translateX(10px); }
+}
+
+.btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+button {
+  font-family: inherit;
+  border: 0;
+}
+
+.yn {
+  flex: 1;
+  padding: 14px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: transform .3s, background .3s;
+}
+
+.yn.yes {
+  background: #fff;
+  color: #000;
+}
+
+.yn.no {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.5);
+}
+
+.yn:hover { transform: scale(1.05); }
+.yn:disabled { opacity: .35; transform: none; }
+
+.msg {
+  min-height: 26px;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #f5c98a;
+}
+
+/* ---------- slide 4: counters and poster ---------- */
+
+#slide-4 {
+  left: calc(25% + 40px);
+  max-width: 600px;
+}
+
+.counts {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 8px;
+}
+
+.cbox b {
+  display: block;
+  font-family: 'Italiana', serif;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 400;
+  color: #fff;
+}
+
+.cbox span {
+  font-size: 10px;
+  letter-spacing: 3px;
+  opacity: .6;
+  text-transform: uppercase;
+}
+
+.live {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3cb054;
+  margin-right: 8px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink { 50% { opacity: .2; } }
+
+.foot {
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: .6;
+  margin-bottom: 22px;
+}
+
+.revealBtn {
+  padding: 14px 30px;
+  border-radius: 99px;
+  background: #fff;
+  color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: transform .3s;
+}
+
+.revealBtn:hover { transform: scale(1.05); }
+
+.revealBtn.locked {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.4);
+}
+
+/* ---------- grid ---------- */
+
+.story-dashes {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story-dash {
+  width: 2px;
+  height: 40px;
+  background: rgba(255,255,255,.15);
+  border-radius: 2px;
+}
+
+.story-dash-fill {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transform: scaleY(0);
+  transform-origin: top;
+  will-change: transform;
+}
+
+.grid-horizontal-line {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,.12);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.grid-lines {
+  position: fixed;
+  top: 0;
+  left: 40px;
+  right: 40px;
+  width: calc(100% - 80px);
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.grid-line {
+  position: relative;
+  width: 1px;
+  height: 100%;
+  background: rgba(255,255,255,.12);
+}
+
+.grid-line:nth-child(3) {
+  margin-top: 70px;
+  height: calc(100vh - 70px);
+}
+
+.grid-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -3px;
+  transform: translate3d(0,0,0);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.4);
+  box-shadow: 0 0 4px rgba(255,255,255,.15);
+  will-change: transform;
+}
+
+/* ---------- poster reveal ---------- */
+
+.reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  place-items: center;
+  background: radial-gradient(circle,#3a0f16,#0a0204);
+}
+
+.reveal.show { display: grid; }
+
+.curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  z-index: 3;
+  transition: transform 1.8s cubic-bezier(.7,0,.2,1);
+  background: repeating-linear-gradient(
+    90deg,
+    #7a0a28 0 26px,
+    #a50f35 26px 52px
+  );
+  box-shadow: 0 0 60px #000 inset;
+}
+
+.curtain.l { left: 0; }
+.curtain.r { right: 0; }
+
+.reveal.open .curtain.l { transform: translateX(-102%); }
+.reveal.open .curtain.r { transform: translateX(102%); }
+
+.beams {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 2s 1s;
+  animation: sweep 6s ease-in-out infinite alternate;
+  background: conic-gradient(
+    from 0deg at 50% 100%,
+    transparent 0 30deg,
+    rgba(245,164,0,.2) 40deg,
+    transparent 50deg 80deg,
+    rgba(214,71,155,.2) 90deg,
+    transparent 100deg 130deg,
+    rgba(31,155,214,.2) 140deg,
+    transparent 150deg
+  );
+}
+
+.reveal.open .beams { opacity: 1; }
+
+@keyframes sweep {
+  from { transform: rotate(-10deg) scale(1.3); }
+  to { transform: rotate(10deg) scale(1.3); }
+}
+
+.posterWrap {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 14px;
+  opacity: 0;
+  transform: scale(.5) rotate(-8deg);
+  transition: all 1.5s .9s cubic-bezier(.2,1.3,.4,1);
+  box-shadow: 0 0 90px rgba(245,164,0,.7);
+}
+
+.reveal.open .posterWrap {
+  opacity: 1;
+  transform: none;
+}
+
+.posterWrap img {
+  display: block;
+  max-width: 92vw;
+  max-height: 84vh;
+}
+
+.posterWrap iframe {
+  border: 0;
+  width: min(92vw,700px);
+  height: 84vh;
+  background: #fff;
+}
+
+.close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 60;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 22px;
+  color: #fff;
+  background: rgba(255,255,255,.25);
+  transition: transform .3s;
+}
+
+.close:hover { transform: rotate(90deg) scale(1.15); }
+
+.hello {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 4;
+  font-family: 'Italiana', serif;
+  color: #ffe9b8;
+  font-size: clamp(22px,4vw,34px);
+  letter-spacing: 3px;
+  opacity: 0;
+  transition: opacity 1s 1.5s;
+}
+
+.reveal.open .hello { opacity: 1; }
+
+.dl {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  padding: 10px 20px;
+  border-radius: 99px;
+  background: #ffe9b8;
+  color: #1a1208;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 1s 2s;
+}
+
+.reveal.open .dl { opacity: 1; }
+
+/* ---------- mobile ---------- */
 
 @media (max-width: 760px) {
   .cinematic-container { padding: 0 24px 24px; }
   .header-nav { display: none; }
-  .slide { bottom: 7%; left: 24px !important; width: calc(100% - 48px) !important; }
-  .slide-title { font-size: 52px; margin-bottom: 14px; }
-  #slide-1 .slide-title, #slide-1 .eyebrow, #slide-1 .col-1 { margin-left: 0 !important; }
+
+  .slide {
+    bottom: 7%;
+    left: 24px !important;
+    width: calc(100% - 48px) !important;
+    max-width: none !important;
+  }
+
+  .slide-title {
+    font-size: 52px;
+    margin-bottom: 14px;
+  }
+
+  #slide-1 .slide-title,
+  #slide-1 .eyebrow,
+  #slide-1 .col-1,
+  #slide-2 .slide-title,
+  .s2-body {
+    margin-left: 0 !important;
+  }
+
   #slide-1 .desc-row { flex-direction: column; }
-  #slide-1 .col-1, #slide-1 .col-2 { position: static; width: 100%; min-width: 0; }
-  .slide-desc { font-size: 15px; }
-  .grid-line:nth-child(2), .grid-line:nth-child(4) { display: none; }
-  .grid-lines { left: 16px; right: 16px; }
+
+  #slide-1 .col-1,
+  #slide-1 .col-2 {
+    position: static;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .s2-body { width: 100%; }
+
+  .slide-desc, .fade { font-size: 14px; }
+
+  #cd-panel {
+    top: 80px;
+    left: 24px;
+    padding: 14px;
+  }
+
+  .cd b { font-size: 30px; }
+  .cd div { min-width: 48px; }
+  .cbox b { font-size: 44px; }
+  .counts { gap: 20px; }
+
+  .grid-line:nth-child(2),
+  .grid-line:nth-child(4) {
+    display: none;
+  }
+
+  .grid-lines {
+    left: 16px;
+    right: 16px;
+    width: calc(100% - 32px);
+  }
 }
 </style>
 </head>
+
 <body>
 
-<div class="cursor-inner" id="ci"></div>
-<div class="cursor-outer" id="co"></div>
-
 <div class="scrim"></div>
+<div class="cursor-inner"></div>
+<div class="cursor-outer"></div>
 
 <div class="cinematic-container">
+
   <div class="main-header">
     <div class="brand">Mosaic</div>
+
     <nav class="header-nav">
-      <a href="#" class="nav-link">Home</a><span class="nav-dot"></span>
-      <a href="#" class="nav-link">Theme</a><span class="nav-dot"></span>
-      <a href="#" class="nav-link">Date &amp; Venue</a>
+      <a href="#slide-1" class="nav-link">Welcome</a>
+      <span class="nav-dot"></span>
+      <a href="#slide-2" class="nav-link">Details</a>
+      <span class="nav-dot"></span>
+      <a href="#slide-3" class="nav-link">RSVP</a>
+      <span class="nav-dot"></span>
+      <a href="#slide-4" class="nav-link">Poster</a>
     </nav>
-    <div></div>
+
+    <div class="header-actions">
+      <a href="#" class="contact-btn" id="rsvpTop">
+        RSVP <span class="btn-circle"></span>
+      </a>
+    </div>
   </div>
+
+  <!-- SLIDE 1: WELCOME -->
 
   <div class="slide" id="slide-1">
     <div class="eyebrow">|| Jai Sri Gurudev || · Freshers’ Day</div>
+
     <h2 class="slide-title">Mosaic <br>2026</h2>
+
     <div class="desc-row">
-      <p class="slide-desc col-1">Adichunchanagiri University</p>
-      <p class="slide-desc col-2">Faculty of Commerce &amp; Management<br>Department of Management Studies</p>
+      <p class="slide-desc col-1">
+        Adichunchanagiri University. Faculty of Commerce &amp; Management,
+        Department of Management Studies, welcomes its newest batch.
+      </p>
+
+      <p class="slide-desc col-2">
+        Different Stories, One Beautiful Journey. Every colour a little
+        different, together one bright mosaic.
+      </p>
     </div>
   </div>
+
+  <!-- SLIDE 2: EVENT DETAILS -->
 
   <div class="slide" id="slide-2">
     <h2 class="slide-title">Different <br>Stories</h2>
-    <p class="slide-desc">One Beautiful Journey.</p>
+
+    <div class="s2-body">
+      <p class="slide-desc">
+        One evening to meet, celebrate and begin.
+        Come as you are and leave as part of the picture.
+      </p>
+
+      <div class="chips fade">
+        <span class="chip">14 · 11 · 2026</span>
+        <span class="chip">BGSIT Seminar Hall</span>
+      </div>
+    </div>
   </div>
 
+  <!-- SLIDE 3: RSVP -->
+
   <div class="slide" id="slide-3">
-    <div class="eyebrow">Freshers’ Day · Save the date</div>
-    <h2 class="slide-title">14-11-2026</h2>
-    <p class="slide-desc">BGSIT Seminar Hall</p>
+    <h2 class="slide-title">Will you <br>join us?</h2>
+
+    <div class="fade">
+      <input
+        id="name"
+        type="text"
+        maxlength="40"
+        placeholder="Enter your name"
+        autocomplete="off"
+      >
+
+      <div class="btns">
+        <button class="yn yes" id="yes">Yes, count me in</button>
+        <button class="yn no" id="no">Can’t make it</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: COUNTERS AND POSTER -->
+
+  <div class="slide" id="slide-4">
+    <h2 class="slide-title">One <br>Journey</h2>
+
+    <div class="fade">
+      <div class="counts">
+        <div class="cbox">
+          <b id="cy" data-v="0">0</b>
+          <span>Yes</span>
+        </div>
+
+        <div class="cbox">
+          <b id="cn" data-v="0">0</b>
+          <span>No</span>
+        </div>
+
+        <div class="cbox">
+          <b id="ct" data-v="0">0</b>
+          <span>Total</span>
+        </div>
+      </div>
+
+      <div class="foot">
+        <span class="live"></span>
+        <span id="mode">live count</span>
+      </div>
+
+      <button class="revealBtn locked" id="revealBtn">
+        Reveal the poster
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- COUNTDOWN -->
+
+<div id="cd-panel">
+  <div class="lbl">Countdown</div>
+
+  <div class="cd" id="cd">
+    <div><b id="d">0</b><small>DAYS</small></div>
+    <div><b id="h">00</b><small>HRS</small></div>
+    <div><b id="m">00</b><small>MIN</small></div>
+    <div><b id="s">00</b><small>SEC</small></div>
   </div>
 </div>
 
+<!-- GRID AND SCROLL PROGRESS -->
+
 <div class="grid-horizontal-line"></div>
+
 <div class="grid-lines">
-  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
-  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
-  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
-  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+
   <div class="grid-line">
-    <div class="grid-dot"></div><div class="grid-dot"></div>
+    <div class="grid-dot top"></div>
+    <div class="grid-dot bottom"></div>
+  </div>
+
+  <div class="grid-line">
+    <div class="grid-dot top"></div>
+    <div class="grid-dot bottom"></div>
+  </div>
+
+  <div class="grid-line">
+    <div class="grid-dot top"></div>
+    <div class="grid-dot bottom"></div>
+  </div>
+
+  <div class="grid-line">
+    <div class="grid-dot top"></div>
+    <div class="grid-dot bottom"></div>
+  </div>
+
+  <div class="grid-line story-progress-container">
+    <div class="grid-dot top"></div>
+    <div class="grid-dot bottom"></div>
+
     <div class="story-dashes">
-      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-1"></div></div>
-      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-2"></div></div>
-      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-3"></div></div>
+      <div class="story-dash">
+        <div class="story-dash-fill" id="dash-fill-1"></div>
+      </div>
+
+      <div class="story-dash">
+        <div class="story-dash-fill" id="dash-fill-2"></div>
+      </div>
+
+      <div class="story-dash">
+        <div class="story-dash-fill" id="dash-fill-3"></div>
+      </div>
+
+      <div class="story-dash">
+        <div class="story-dash-fill" id="dash-fill-4"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- POSTER REVEAL OVERLAY -->
+
+<div class="reveal" id="reveal">
+
+  <button class="close" id="close">✕</button>
+
+  <div class="hello" id="hello"></div>
+
+  <div class="beams"></div>
+
+  <div class="curtain l"></div>
+  <div class="curtain r"></div>
+
+  <div class="posterWrap" id="posterWrap"></div>
+
+  <a class="dl" id="dl" download>⬇ Save poster</a>
+
+</div>
+
+<canvas id="fx"></canvas>
 <canvas id="webgl"></canvas>
+
 <script type="importmap">
-{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
 </script>
+
 <script type="module">
 import * as THREE from 'three';
 
+/* =====================================================
+   SETTINGS — CHANGE THESE IF REQUIRED
+===================================================== */
+
+const POSTER_FILE = "poster.png";
+const EVENT_DATE = "2026-11-14T00:00:00+05:30";
+
+const firebaseConfig = {
+  databaseURL: "https://mosaic-freshers-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "mosaic-freshers-2026"
+};
+
+/* ===================================================== */
+
 const $ = id => document.getElementById(id);
-const COLORS = ["#f5a400","#b84fd1","#1f9bd6","#d6479b","#3cb054","#f2711c"];
-const PR = Math.min(devicePixelRatio, 1.5);          // pixel ratio cap = big speed-up
-const isMobile = () => innerWidth < 760;
 
-/* ---------- split titles into letters ---------- */
-document.querySelectorAll('.slide-title').forEach(title => {
-  const parts = title.innerHTML.split(/(<br\s*\/?>)/i);
-  let html = '', n = 0;
-  parts.forEach(part => {
-    if (part.toLowerCase().startsWith('<br')) { html += part; return; }
-    for (const ch of part) {
-      if (ch === ' ') html += ' ';
-      else { html += `<span class="char" style="transition-delay:${n * 0.035}s">${ch}</span>`; n++; }
-    }
+const COLORS = [
+  "#f5a400",
+  "#b84fd1",
+  "#1f9bd6",
+  "#d6479b",
+  "#3cb054",
+  "#f2711c"
+];
+
+const isMobile = () => window.innerWidth < 760;
+
+const canvas = document.querySelector('#webgl');
+
+let scene, camera, renderer, modelPivot, core, tiles;
+
+const clock = new THREE.Clock();
+
+let currentScroll = 0;
+
+let mouseX = 0;
+let mouseY = 0;
+let targetMouseX = 0;
+let targetMouseY = 0;
+
+let cursorX = innerWidth / 2;
+let cursorY = innerHeight / 2;
+
+let outerCursorX = cursorX;
+let outerCursorY = cursorY;
+
+let bgMaterial;
+
+const pixelRatio = Math.min(devicePixelRatio, 1.5);
+
+const shaderUniforms = {
+  uTime: { value: 0 },
+  uResolution: {
+    value: new THREE.Vector2(
+      innerWidth * pixelRatio,
+      innerHeight * pixelRatio
+    )
+  },
+  uMouse: { value: new THREE.Vector2(0, 0) },
+  uScroll: { value: 0 }
+};
+
+let sparkParticles;
+
+const sparkCount = 200;
+const sparkData = [];
+
+const sizes = {
+  width: innerWidth,
+  height: innerHeight
+};
+
+/* ---------- TITLE SPLIT ---------- */
+
+function splitTitlesIntoChars() {
+
+  document.querySelectorAll('.slide-title').forEach(title => {
+
+    const parts = title.innerHTML.split(/(<br\s*\/?>)/i);
+
+    let html = '';
+    let n = 0;
+
+    parts.forEach(part => {
+
+      if (part.toLowerCase().startsWith('<br')) {
+        html += part;
+        return;
+      }
+
+      for (const ch of part) {
+
+        if (ch === ' ') {
+          html += ' ';
+        } else {
+          html += `<span class="char" style="transition-delay:${n * 0.035}s">${ch}</span>`;
+          n++;
+        }
+
+      }
+
+    });
+
+    title.innerHTML = html;
+
   });
-  title.innerHTML = html;
-});
 
-/* ---------- renderer / scene / camera ---------- */
-const canvas = $('webgl');
-const scene = new THREE.Scene();
+}
+
+splitTitlesIntoChars();
+
+/* ---------- THREE.JS SCENE ---------- */
+
+scene = new THREE.Scene();
+
 scene.background = new THREE.Color('#000000');
+scene.fog = new THREE.FogExp2('#000000', 0.01);
 
-const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 100);
+camera = new THREE.PerspectiveCamera(
+  50,
+  sizes.width / sizes.height,
+  0.1,
+  100
+);
+
 camera.position.set(0, 0.2, 3.0);
 scene.add(camera);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-renderer.setPixelRatio(PR);
-renderer.setSize(innerWidth, innerHeight);
+createBackgroundShader();
+
+renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: false,
+  powerPreference: "high-performance"
+});
+
+renderer.setPixelRatio(pixelRatio);
+renderer.setSize(sizes.width, sizes.height);
+
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.6;                  // no shadows = much lighter
+renderer.toneMappingExposure = 2.2;
 
-/* ---------- lights (no shadow maps) ---------- */
-scene.add(new THREE.AmbientLight('#ffffff', 0.35));
-const key = new THREE.DirectionalLight('#ffffff', 4.0); key.position.set(4, 6, 3); scene.add(key);
-const rim = new THREE.DirectionalLight('#e3f2ff', 5.0); rim.position.set(-5, 3, -4); scene.add(rim);
-const fill = new THREE.DirectionalLight('#fff3e6', 0.8); fill.position.set(-2, -4, 2); scene.add(fill);
+/* ---------- LIGHTING ---------- */
 
-/* ---------- background wave shader (lighter version) ---------- */
-const U = {
-  uTime: { value: 0 },
-  uResolution: { value: new THREE.Vector2(innerWidth * PR, innerHeight * PR) },
-  uMouse: { value: new THREE.Vector2() },
-  uScroll: { value: 0 }
-};
-const bg = new THREE.Mesh(
-  new THREE.PlaneGeometry(30, 30),
-  new THREE.ShaderMaterial({
-    uniforms: U, depthWrite: false, depthTest: false,
-    vertexShader: `void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
-    fragmentShader: `
-      uniform float uTime; uniform vec2 uResolution; uniform vec2 uMouse; uniform float uScroll;
-      void main(){
-        vec2 uv = (gl_FragCoord.xy - 0.5*uResolution.xy) / uResolution.y;
-        float time = uTime*0.08, s = uScroll, sd = s*5.0;
-        vec2 w = uv;
-        w.x += sin(uv.y*2.5 + time*0.2 + sd)*0.35;
-        w.y += cos(uv.x*2.5 - time*0.15 - sd*0.8)*0.35;
-        w += vec2(s*0.04, -s*0.02) + uMouse*0.05;
-        float w1 = sin(dot(w, vec2(0.825,0.565))*2.4 + time);
-        float w2 = cos(dot(w, vec2(0.765,-0.644))*3.2 - time*1.4 + w1*0.4);
-        float f = w1*0.6 + w2*0.4;
-        float a = max(0.0, 1.0 - abs(f-0.12));
-        float a2 = a*a, a4 = a2*a2, a8 = a4*a4;
-        float crest = a2*0.5 + a8*0.9;
+scene.add(new THREE.AmbientLight('#ffffff', 0.1));
 
-        vec3 s0 = vec3(0.001,0.0006,0.0004), b0 = vec3(0.085,0.040,0.015), d0 = vec3(0.050,0.022,0.008), c0 = vec3(0.45,0.30,0.18);
-        vec3 s1 = vec3(0.0006,0.0004,0.0012), b1 = vec3(0.035,0.020,0.070), d1 = vec3(0.018,0.010,0.045), c1 = vec3(0.32,0.22,0.58);
-        float t = smoothstep(0.0,1.0,s);
-        vec3 col = mix(s0,s1,t);
-        col = mix(col, mix(d0,d1,t), smoothstep(-0.6,0.2,f));
-        col = mix(col, mix(b0,b1,t), smoothstep(0.0,0.8,f));
-        col += mix(c0,c1,t) * crest * 1.1;
-        col *= 1.0 - dot(uv,uv)*0.12;
-        gl_FragColor = vec4(col,1.0);
-      }`
-  })
-);
-bg.position.set(0, 0, -8); bg.renderOrder = -10;
-camera.add(bg);
+const keyLight = new THREE.SpotLight('#ffffff', 18.0);
 
-/* ---------- mosaic centrepiece ---------- */
-const pivot = new THREE.Group(); scene.add(pivot);
-const geo = new THREE.IcosahedronGeometry(1.15, 1).toNonIndexed();
-const cnt = geo.attributes.position.count;
-const colArr = new Float32Array(cnt * 3), tc = new THREE.Color();
-for (let f = 0; f < cnt / 3; f++) {
-  tc.set(COLORS[Math.floor(Math.random() * 6)]);
-  for (let v = 0; v < 3; v++) { const i = (f*3+v)*3; colArr[i]=tc.r; colArr[i+1]=tc.g; colArr[i+2]=tc.b; }
+keyLight.position.set(4, 6, 3);
+keyLight.angle = Math.PI / 4;
+keyLight.penumbra = 0.9;
+
+scene.add(keyLight);
+
+const rimLight = new THREE.DirectionalLight('#e3f2ff', 10.0);
+
+rimLight.position.set(-5, 3, -4);
+scene.add(rimLight);
+
+const fillLight = new THREE.DirectionalLight('#fff3e6', 0.8);
+
+fillLight.position.set(-2, -4, 2);
+scene.add(fillLight);
+
+/* ---------- MOSAIC CENTREPIECE ---------- */
+
+function createMosaicObject() {
+
+  modelPivot = new THREE.Group();
+  scene.add(modelPivot);
+
+  const geo = new THREE.IcosahedronGeometry(1.15, 1).toNonIndexed();
+
+  const pos = geo.attributes.position;
+  const colArr = new Float32Array(pos.count * 3);
+
+  const c = new THREE.Color();
+
+  for (let f = 0; f < pos.count / 3; f++) {
+
+    c.set(COLORS[Math.floor(Math.random() * COLORS.length)]);
+
+    for (let v = 0; v < 3; v++) {
+
+      colArr[(f * 3 + v) * 3] = c.r;
+      colArr[(f * 3 + v) * 3 + 1] = c.g;
+      colArr[(f * 3 + v) * 3 + 2] = c.b;
+
+    }
+
+  }
+
+  geo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
+  geo.computeVertexNormals();
+
+  core = new THREE.Mesh(
+    geo,
+    new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.38,
+      metalness: 0.55,
+      flatShading: true
+    })
+  );
+
+  modelPivot.add(core);
+
+  /* Wire shell */
+
+  const wire = new THREE.LineSegments(
+    new THREE.EdgesGeometry(
+      new THREE.IcosahedronGeometry(1.45, 1)
+    ),
+    new THREE.LineBasicMaterial({
+      color: '#ffffff',
+      transparent: true,
+      opacity: 0.18
+    })
+  );
+
+  core.add(wire);
+
+  /* Orbiting tiles */
+
+  tiles = new THREE.Group();
+
+  const N = 28;
+
+  for (let i = 0; i < N; i++) {
+
+    const a = (i / N) * Math.PI * 2;
+
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.2, 0.05),
+      new THREE.MeshStandardMaterial({
+        color: COLORS[i % 6],
+        roughness: 0.35,
+        metalness: 0.6
+      })
+    );
+
+    m.position.set(
+      Math.cos(a) * 2.0,
+      Math.sin(a * 3) * 0.12,
+      Math.sin(a) * 2.0
+    );
+
+    m.lookAt(0, 0, 0);
+
+    tiles.add(m);
+
+  }
+
+  tiles.rotation.x = 0.35;
+  modelPivot.add(tiles);
+
+  modelPivot.position.y = -0.1;
+
 }
-geo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
-geo.computeVertexNormals();
-const core = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4, metalness: 0.5, flatShading: true }));
-pivot.add(core);
 
-const tiles = new THREE.Group();
-const tileGeo = new THREE.BoxGeometry(0.2, 0.2, 0.05);
-for (let i = 0; i < 28; i++) {
-  const a = (i / 28) * Math.PI * 2;
-  const m = new THREE.Mesh(tileGeo, new THREE.MeshStandardMaterial({ color: COLORS[i % 6], roughness: 0.4, metalness: 0.5 }));
-  m.position.set(Math.cos(a)*2.0, Math.sin(a*3)*0.12, Math.sin(a)*2.0);
-  m.lookAt(0, 0, 0);
-  tiles.add(m);
+createMosaicObject();
+
+/* ---------- SPARKS ---------- */
+
+function createSparkTexture() {
+
+  const c = document.createElement('canvas');
+
+  c.width = 16;
+  c.height = 16;
+
+  const ctx = c.getContext('2d');
+
+  const g = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.25, 'rgba(255,255,255,0.85)');
+  g.addColorStop(0.6, 'rgba(255,255,255,0.3)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 16, 16);
+
+  return new THREE.CanvasTexture(c);
+
 }
-tiles.rotation.x = 0.35;
-pivot.add(tiles);
-pivot.position.y = -0.1;
 
-/* ---------- sparks (200) ---------- */
-const SC = 200, sd = [];
-const sPos = new Float32Array(SC * 3), sCol = new Float32Array(SC * 3);
-for (let i = 0; i < SC; i++) {
-  sPos[i*3] = (Math.random()-.5)*6.5; sPos[i*3+1] = (Math.random()-.5)*5-.5; sPos[i*3+2] = (Math.random()-.5)*6.5;
-  tc.set(COLORS[Math.floor(Math.random()*6)]);
-  sCol[i*3]=tc.r; sCol[i*3+1]=tc.g; sCol[i*3+2]=tc.b;
-  sd.push({ vx:(Math.random()-.5)*.4, vy:.15+Math.random()*.3, vz:(Math.random()-.5)*.4, ss:.5+Math.random()*1.5, sr:.05+Math.random()*.15, ph:Math.random()*6.28 });
+function createSparks() {
+
+  const geometry = new THREE.BufferGeometry();
+
+  const positions = new Float32Array(sparkCount * 3);
+  const colors = new Float32Array(sparkCount * 3);
+
+  const col = new THREE.Color();
+
+  for (let i = 0; i < sparkCount; i++) {
+
+    positions[i * 3] = (Math.random() - 0.5) * 6.5;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 5.0 - 0.5;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 6.5;
+
+    col.set(COLORS[Math.floor(Math.random() * COLORS.length)]);
+
+    colors[i * 3] = col.r;
+    colors[i * 3 + 1] = col.g;
+    colors[i * 3 + 2] = col.b;
+
+    sparkData.push({
+
+      speedX: (Math.random() - 0.5) * 0.4,
+      speedY: 0.15 + Math.random() * 0.3,
+      speedZ: (Math.random() - 0.5) * 0.4,
+
+      swaySpeed: 0.5 + Math.random() * 1.5,
+      swayRadius: 0.05 + Math.random() * 0.15,
+      phase: Math.random() * Math.PI * 2
+
+    });
+
+  }
+
+  geometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(positions, 3)
+  );
+
+  geometry.setAttribute(
+    'color',
+    new THREE.BufferAttribute(colors, 3)
+  );
+
+  sparkParticles = new THREE.Points(
+    geometry,
+    new THREE.PointsMaterial({
+      size: 0.025,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      map: createSparkTexture()
+    })
+  );
+
+  scene.add(sparkParticles);
+
 }
-const sg = new THREE.BufferGeometry();
-sg.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-sg.setAttribute('color', new THREE.BufferAttribute(sCol, 3));
-const tex = (() => {
-  const c = document.createElement('canvas'); c.width = c.height = 16;
-  const x = c.getContext('2d'), g = x.createRadialGradient(8,8,0,8,8,8);
-  g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.25,'rgba(255,255,255,.85)');
-  g.addColorStop(.6,'rgba(255,255,255,.3)'); g.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle = g; x.fillRect(0,0,16,16); return new THREE.CanvasTexture(c);
-})();
-scene.add(new THREE.Points(sg, new THREE.PointsMaterial({
-  size: 0.03, vertexColors: true, transparent: true, opacity: 0.8,
-  blending: THREE.AdditiveBlending, depthWrite: false, map: tex
-})));
 
-/* ---------- pointer / resize ---------- */
-let mx = 0, my = 0, tmx = 0, tmy = 0;
-let cx = innerWidth/2, cy = innerHeight/2, ox = cx, oy = cy;
-const ci = $('ci'), co = $('co');
-addEventListener('mousemove', e => {
-  cx = e.clientX; cy = e.clientY;
-  ci.style.transform = `translate3d(${cx}px,${cy}px,0)`;
-  tmx = (e.clientX / innerWidth) * 2 - 1;
-  tmy = (e.clientY / innerHeight) * 2 - 1;
-}, { passive: true });
+createSparks();
 
-addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
+/* ---------- BACKGROUND WAVE SHADER ---------- */
+
+function createBackgroundShader() {
+
+  const vertexShader = `
+    varying vec2 vUv;
+
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const fragmentShader = `
+    varying vec2 vUv;
+
+    uniform float uTime;
+    uniform vec2 uResolution;
+    uniform vec2 uMouse;
+    uniform float uScroll;
+
+    void main() {
+
+      vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.y;
+
+      float aspect = uResolution.x / uResolution.y;
+      float time = uTime * 0.08;
+      float scroll = uScroll;
+
+      float angle1 = 0.6;
+      float angle2 = -0.7;
+      float angle3 = 1.2;
+
+      float freq1 = 2.4;
+      float freq2 = 3.2;
+      float freq3 = 4.0;
+
+      vec2 warpedUv = uv;
+
+      float scrollDeform = scroll * 5.0;
+
+      warpedUv.x += sin(uv.y * 2.5 + time * 0.2 + scrollDeform) * 0.35;
+      warpedUv.y += cos(uv.x * 2.5 - time * 0.15 - scrollDeform * 0.8) * 0.35;
+
+      warpedUv.x += sin(uv.y * 1.2 - time * 0.1 - scrollDeform * 1.5) * 0.25;
+      warpedUv.y += cos(uv.x * 1.2 + time * 0.18 + scrollDeform * 1.2) * 0.25;
+
+      vec2 scrollDrift = vec2(scroll * 0.04, -scroll * 0.02);
+      vec2 mouseShift = vec2(uMouse.x * aspect * 0.05, uMouse.y * 0.05);
+
+      warpedUv += scrollDrift + mouseShift;
+
+      vec2 dir1 = vec2(cos(angle1), sin(angle1));
+      vec2 dir2 = vec2(cos(angle2), sin(angle2));
+      vec2 dir3 = vec2(cos(angle3), sin(angle3));
+
+      float w1 = sin(dot(warpedUv, dir1) * freq1 + time * 1.0);
+      float w2 = cos(dot(warpedUv, dir2) * freq2 - time * 1.4 + w1 * 0.4);
+      float w3 = sin(dot(warpedUv, dir3) * freq3 + time * 1.8 + w2 * 0.5);
+
+      float waveField = w1 * 0.50 + w2 * 0.35 + w3 * 0.15;
+
+      float wideSheen = pow(max(0.0, 1.0 - abs(waveField - 0.1)), 2.5);
+      float crispSpecular = pow(max(0.0, 1.0 - abs(waveField - 0.15)), 8.0);
+
+      float crest = wideSheen * 0.5 + crispSpecular * 0.9;
+
+      vec3 c0_shadow = vec3(0.0010, 0.0006, 0.0004);
+      vec3 c0_wave1 = vec3(0.085, 0.040, 0.015);
+      vec3 c0_wave2 = vec3(0.050, 0.022, 0.008);
+      vec3 c0_crest = vec3(0.45, 0.30, 0.18);
+
+      vec3 c1_shadow = vec3(0.0006, 0.0004, 0.0012);
+      vec3 c1_wave1 = vec3(0.035, 0.020, 0.070);
+      vec3 c1_wave2 = vec3(0.018, 0.010, 0.045);
+      vec3 c1_crest = vec3(0.32, 0.22, 0.58);
+
+      float t = smoothstep(0.0, 1.0, scroll);
+
+      vec3 colShadow = mix(c0_shadow, c1_shadow, t);
+      vec3 colWave1 = mix(c0_wave1, c1_wave1, t);
+      vec3 colWave2 = mix(c0_wave2, c1_wave2, t);
+      vec3 colCrest = mix(c0_crest, c1_crest, t);
+
+      vec3 color = colShadow;
+
+      color = mix(color, colWave2, smoothstep(-0.6, 0.2, waveField));
+      color = mix(color, colWave1, smoothstep(0.0, 0.8, waveField));
+
+      color += colCrest * crest * 1.4;
+
+      float vignette = 1.0 - dot(uv, uv) * 0.12;
+
+      color *= vignette;
+
+      gl_FragColor = vec4(color, 1.0);
+
+    }
+  `;
+
+  bgMaterial = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: shaderUniforms,
+    depthWrite: false,
+    depthTest: false
+  });
+
+  const bgMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(30, 30),
+    bgMaterial
+  );
+
+  bgMesh.position.set(0, 0, -8);
+  bgMesh.renderOrder = -10;
+
+  camera.add(bgMesh);
+
+}
+
+/* ---------- RESIZE AND POINTER ---------- */
+
+function onWindowResize() {
+
+  sizes.width = innerWidth;
+  sizes.height = innerHeight;
+
+  camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-  U.uResolution.value.set(innerWidth * PR, innerHeight * PR);
-});
 
-/* ---------- slides + grid (transform-only, cached) ---------- */
-const s1 = $('slide-1'), s2 = $('slide-2'), s3 = $('slide-3');
-const fills = [1,2,3].map(i => $('dash-fill-' + i));
-const dots = [...document.querySelectorAll('.grid-dot')];
-const lastFill = [-1,-1,-1];
-const on = (v, a, b) => v >= a && v <= b;
+  const ratio = Math.min(devicePixelRatio, 1.5);
 
-function updateUI(sc) {
-  for (let i = 0; i < 3; i++) {
-    const p = Math.max(0, Math.min(1, (sc - i/3) * 3));
-    const q = Math.round(p * 200) / 200;
-    if (q !== lastFill[i]) { lastFill[i] = q; fills[i].style.transform = `scaleY(${q})`; }
-  }
-  s1.classList.toggle('active', on(sc, -0.1, 0.27));
-  s2.classList.toggle('active', on(sc, 0.36, 0.62));
-  s3.classList.toggle('active', on(sc, 0.72, 1.05));
-  for (let i = 0; i < dots.length; i++) {
-    const start = (i * 17) % 80 + 10;
-    let speed = 90 + (i * 55) % 180; if (i % 2 === 0) speed = -speed;
-    let y = start + sc * speed; y = ((y % 100) + 100) % 100;
-    dots[i].style.transform = `translate3d(0,${y}vh,0)`;
-  }
+  renderer.setPixelRatio(ratio);
+  renderer.setSize(sizes.width, sizes.height);
+
+  shaderUniforms.uResolution.value.set(
+    sizes.width * ratio,
+    sizes.height * ratio
+  );
+
+  sizeFx();
+
 }
 
-/* ---------- nav ---------- */
-const targets = [0.0, 0.5, 0.95];
-document.querySelectorAll('.nav-link').forEach((l, i) => l.addEventListener('click', e => {
-  e.preventDefault();
-  scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) * targets[i], behavior: 'smooth' });
-}));
+addEventListener('resize', onWindowResize);
 
-/* ---------- loop ---------- */
-const clock = new THREE.Clock();
-const camTarget = new THREE.Vector3(), lookAt = new THREE.Vector3();
-let currentScroll = 0, running = true;
-document.addEventListener('visibilitychange', () => {
-  running = !document.hidden;
-  if (running) { clock.getDelta(); animate(); }
+addEventListener('mousemove', e => {
+
+  cursorX = e.clientX;
+  cursorY = e.clientY;
+
+  const ci = document.querySelector('.cursor-inner');
+
+  ci.style.transform =
+    `translate3d(${cursorX}px,${cursorY}px,0) translate(-50%,-50%)`;
+
+  targetMouseX = (e.clientX / innerWidth) * 2 - 1;
+  targetMouseY = (e.clientY / innerHeight) * 2 - 1;
+
 });
+
+/* ---------- CONFETTI AND RAIN ---------- */
+
+const fxCanvas = $('fx');
+const fc = fxCanvas.getContext('2d');
+
+function sizeFx() {
+  fxCanvas.width = innerWidth;
+  fxCanvas.height = innerHeight;
+}
+
+sizeFx();
+
+let parts = [];
+let running = false;
+
+function burst(kind = "confetti", n = 220) {
+
+  for (let i = 0; i < n; i++) {
+
+    const rain = kind === "rain";
+
+    parts.push({
+
+      x: rain
+        ? Math.random() * innerWidth
+        : innerWidth / 2 + (Math.random() - .5) * 240,
+
+      y: rain
+        ? -30 - Math.random() * 300
+        : innerHeight * .65,
+
+      vx: rain
+        ? (Math.random() - .5) * 1.5
+        : (Math.random() - .5) * 20,
+
+      vy: rain
+        ? 2 + Math.random() * 4
+        : -8 - Math.random() * 18,
+
+      g: rain ? .04 : .38,
+      s: rain ? 22 : 6 + Math.random() * 9,
+
+      r: Math.random() * 6,
+      vr: (Math.random() - .5) * .35,
+
+      c: COLORS[Math.random() * 6 | 0],
+      e: rain ? "🥲" : null
+
+    });
+
+  }
+
+  if (!running) {
+    running = true;
+    loop();
+  }
+
+}
+
+function loop() {
+
+  if (document.hidden) {
+    running = false;
+    return;
+  }
+
+  fc.clearRect(0, 0, innerWidth, innerHeight);
+
+  parts = parts.filter(p => p.y < innerHeight + 40);
+
+  for (const p of parts) {
+
+    p.vy += p.g;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.r += p.vr;
+    p.vx *= .995;
+
+    fc.save();
+
+    fc.translate(p.x, p.y);
+    fc.rotate(p.r);
+
+    if (p.e) {
+
+      fc.font = p.s + "px serif";
+      fc.fillText(p.e, 0, 0);
+
+    } else {
+
+      fc.fillStyle = p.c;
+      fc.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+
+    }
+
+    fc.restore();
+
+  }
+
+  if (parts.length) {
+    requestAnimationFrame(loop);
+  } else {
+    running = false;
+  }
+
+}
+
+/* ---------- GRID DOTS AND SLIDES ---------- */
+
+function updateGridDots(scroll) {
+
+  const dots = document.querySelectorAll('.grid-dot');
+
+  dots.forEach((dot, i) => {
+
+    const startY = (i * 17) % 80 + 10;
+
+    let speed = 90 + (i * 55) % 180;
+
+    if (i % 2 === 0) speed = -speed;
+
+    let y = startY + scroll * speed;
+
+    y = ((y % 100) + 100) % 100;
+
+    dot.style.transform = `translate3d(0,${y}vh,0)`;
+
+  });
+
+}
+
+function updateSlides(scroll) {
+
+  for (let i = 1; i <= 4; i++) {
+
+    const fill = $(`dash-fill-${i}`);
+
+    const start = (i - 1) * 0.25;
+    const end = i * 0.25;
+
+    const p = Math.max(
+      0,
+      Math.min(1, (scroll - start) / (end - start))
+    );
+
+    fill.style.transform = `scaleY(${p})`;
+
+  }
+
+  const on = (v, a, b) => v >= a && v <= b;
+
+  $('slide-1').classList.toggle(
+    'active',
+    on(scroll, -0.10, 0.12)
+  );
+
+  const a2 = on(scroll, 0.26, 0.42);
+
+  $('slide-2').classList.toggle('active', a2);
+  $('cd-panel').classList.toggle('active', a2);
+
+  $('slide-3').classList.toggle(
+    'active',
+    on(scroll, 0.52, 0.72)
+  );
+
+  $('slide-4').classList.toggle(
+    'active',
+    on(scroll, 0.82, 1.05)
+  );
+
+}
+
+/* ---------- MAIN ANIMATION LOOP ---------- */
+
+let animationRunning = true;
 
 function animate() {
-  if (!running) return;
+
+  if (!animationRunning) return;
+
   requestAnimationFrame(animate);
+
   const dt = Math.min(clock.getDelta(), 0.05);
-  const t = clock.elapsedTime;
 
-  const max = document.documentElement.scrollHeight - innerHeight;
-  const target = max > 0 ? scrollY / max : 0;
-  currentScroll += (target - currentScroll) * 0.05;
+  const maxScroll =
+    document.documentElement.scrollHeight - innerHeight;
 
-  mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
-  ox += (cx - ox) * 0.2;   oy += (cy - oy) * 0.2;
-  co.style.transform = `translate3d(${ox}px,${oy}px,0)`;
+  const targetScroll =
+    maxScroll > 0 ? scrollY / maxScroll : 0;
 
-  pivot.rotation.y = mx * 0.25;
-  pivot.rotation.x = my * 0.15;
-  core.rotation.y += dt * 0.18;
-  core.rotation.x += dt * 0.07;
-  tiles.rotation.y -= dt * 0.25;
+  currentScroll += (targetScroll - currentScroll) * 0.025;
 
-  const vel = Math.abs(target - currentScroll);
-  const mul = 1 + vel * 9, sway0 = 1 + vel * 3.2;
-  const p = sg.attributes.position.array;
-  for (let i = 0; i < SC; i++) {
-    const k = i*3, d = sd[i];
-    p[k]   += d.vx * dt * mul + Math.sin(t * d.ss + d.ph) * d.sr * sway0 * dt;
-    p[k+1] += d.vy * dt * mul;
-    p[k+2] += d.vz * dt * mul + Math.cos(t * d.ss + d.ph) * d.sr * sway0 * dt;
-    if (p[k+1] > 3 || Math.abs(p[k]) > 3.5 || Math.abs(p[k+2]) > 3.5) {
-      p[k+1] = -2.5; p[k] = (Math.random()-.5)*3; p[k+2] = (Math.random()-.5)*3;
-    }
+  mouseX += (targetMouseX - mouseX) * 0.05;
+  mouseY += (targetMouseY - mouseY) * 0.05;
+
+  outerCursorX += (cursorX - outerCursorX) * 0.2;
+  outerCursorY += (cursorY - outerCursorY) * 0.2;
+
+  const co = document.querySelector('.cursor-outer');
+
+  co.style.transform =
+    `translate3d(${outerCursorX}px,${outerCursorY}px,0) translate(-50%,-50%)`;
+
+  /* Mosaic movement */
+
+  if (modelPivot) {
+
+    modelPivot.rotation.y = mouseX * 0.25;
+    modelPivot.rotation.x = mouseY * 0.15;
+
+    core.rotation.y += dt * 0.18;
+    core.rotation.x += dt * 0.07;
+
+    tiles.rotation.y -= dt * 0.25;
+
   }
-  sg.attributes.position.needsUpdate = true;
 
-  // camera orbit
+  /* Spark movement */
+
+  if (sparkParticles) {
+
+    const p = sparkParticles.geometry.attributes.position.array;
+
+    const time = clock.getElapsedTime();
+
+    const vel = Math.abs(targetScroll - currentScroll);
+
+    const speedMul = 1 + vel * 9;
+    const turb = vel * 0.8;
+
+    for (let i = 0; i < sparkCount; i++) {
+
+      const k = i * 3;
+      const d = sparkData[i];
+
+      p[k] += d.speedX * dt * speedMul;
+      p[k + 1] += d.speedY * dt * speedMul;
+      p[k + 2] += d.speedZ * dt * speedMul;
+
+      const sway = d.swayRadius * (1 + turb * 4);
+
+      p[k] +=
+        Math.sin(time * d.swaySpeed + d.phase) * sway * dt;
+
+      p[k + 2] +=
+        Math.cos(time * d.swaySpeed + d.phase) * sway * dt;
+
+      if (
+        p[k + 1] > 3 ||
+        Math.abs(p[k]) > 3.5 ||
+        Math.abs(p[k + 2]) > 3.5
+      ) {
+
+        p[k + 1] = -2.5;
+        p[k] = (Math.random() - .5) * 3;
+        p[k + 2] = (Math.random() - .5) * 3;
+
+      }
+
+    }
+
+    sparkParticles.geometry.attributes.position.needsUpdate = true;
+
+  }
+
+  /* Camera movement */
+
   const phi = currentScroll * Math.PI * 2;
-  const y = 0.35 + Math.sin(currentScroll * Math.PI) * 0.8;
-  const r = 4.2 - Math.sin(currentScroll * Math.PI) * 0.6;
-  camTarget.set(r * Math.sin(phi), y, r * Math.cos(phi));
-  camera.position.lerp(camTarget, 0.05);
 
-  // keep the object up/right so it never sits under the text
+  const y =
+    0.35 + Math.sin(currentScroll * Math.PI) * 0.8;
+
+  const radius =
+    4.2 - Math.sin(currentScroll * Math.PI) * 0.6;
+
+  const x = radius * Math.sin(phi);
+  const z = radius * Math.cos(phi);
+
   const tp = Math.min(1, currentScroll / 0.28);
+
   const ease = (Math.cos(tp * Math.PI) + 1) * 0.5;
-  if (isMobile()) lookAt.set(0, -1.0, 0);
-  else lookAt.set(-0.9 * ease - 0.5, -0.9, 0);
+
+  const mob = isMobile();
+
+  const lookAt = new THREE.Vector3(
+    mob ? 0 : (-0.9 * ease - 0.45),
+    mob ? -1.0 : -0.85,
+    0
+  );
+
+  camera.position.lerp(
+    new THREE.Vector3(x, y, z),
+    0.025
+  );
+
   camera.lookAt(lookAt);
 
-  U.uTime.value = t;
-  U.uMouse.value.set(mx, -my);
-  U.uScroll.value = currentScroll;
+  /* Shader updates */
 
-  updateUI(currentScroll);
+  shaderUniforms.uTime.value = clock.getElapsedTime();
+
+  shaderUniforms.uMouse.value.set(mouseX, -mouseY);
+
+  shaderUniforms.uScroll.value = currentScroll;
+
+  updateSlides(currentScroll);
+  updateGridDots(currentScroll);
+
   renderer.render(scene, camera);
+
 }
+
+/* ---------- NAVIGATION ---------- */
+
+const targetScrolls = [0.0, 0.34, 0.62, 0.94];
+
+function scrollToFrac(f) {
+
+  const max =
+    document.documentElement.scrollHeight - innerHeight;
+
+  scrollTo({
+    top: max * f,
+    behavior: 'smooth'
+  });
+
+}
+
+document.querySelectorAll('.nav-link').forEach((l, i) => {
+
+  l.addEventListener('click', e => {
+
+    e.preventDefault();
+    scrollToFrac(targetScrolls[i]);
+
+  });
+
+});
+
+$('rsvpTop').addEventListener('click', e => {
+
+  e.preventDefault();
+  scrollToFrac(0.62);
+
+});
+
+/* ---------- COUNTDOWN ---------- */
+
+(function tick() {
+
+  const diff = new Date(EVENT_DATE) - Date.now();
+
+  if (diff <= 0) {
+
+    $('cd').innerHTML =
+      '<span class="cd-done">It’s MOSAIC day!</span>';
+
+    return;
+
+  }
+
+  const p = n => String(n).padStart(2, "0");
+
+  $('d').textContent = Math.floor(diff / 864e5);
+
+  $('h').textContent =
+    p(Math.floor(diff / 36e5) % 24);
+
+  $('m').textContent =
+    p(Math.floor(diff / 6e4) % 60);
+
+  $('s').textContent =
+    p(Math.floor(diff / 1e3) % 60);
+
+  setTimeout(tick, 1000);
+
+})();
+
+/* ---------- COUNTER ANIMATION ---------- */
+
+function countTo(el, to) {
+
+  const from = +el.dataset.v || 0;
+
+  el.dataset.v = to;
+
+  const t0 = performance.now();
+
+  (function f(t) {
+
+    const k = Math.min(1, (t - t0) / 900);
+
+    el.textContent = Math.round(
+      from + (to - from) * (1 - Math.pow(1 - k, 3))
+    );
+
+    if (k < 1) requestAnimationFrame(f);
+
+  })(t0);
+
+}
+
+function showCounts(y, n) {
+
+  countTo($('cy'), y);
+  countTo($('cn'), n);
+  countTo($('ct'), y + n);
+
+}
+
+/* ---------- FIREBASE SHARED RSVP STORAGE ---------- */
+
+$('mode').textContent = "connecting to live counts…";
+
+const firebaseReady = (async () => {
+
+  const [A, D] = await Promise.all([
+
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+
+  ]);
+
+  const app = A.initializeApp(firebaseConfig);
+
+  const db = D.getDatabase(app, firebaseConfig.databaseURL);
+
+  const countsRef = D.ref(db, "counts");
+
+  /* Every visitor receives the same live totals */
+
+  D.onValue(
+    countsRef,
+
+    snapshot => {
+
+      const counts = snapshot.val() || {};
+
+      showCounts(
+        Number(counts.yes || 0),
+        Number(counts.no || 0)
+      );
+
+      $('mode').textContent = "live count · connected";
+
+    },
+
+    error => {
+
+      console.error("Firebase read error:", error);
+
+      $('mode').textContent = "database read error";
+
+    }
+
+  );
+
+  return { D, db };
+
+})();
+
+firebaseReady.catch(error => {
+
+  console.error("Firebase initialization failed:", error);
+
+  $('mode').textContent = "database connection failed";
+
+});
+
+/* Save RSVP */
+
+async function saveAnswer(name, answer) {
+
+  const { D, db } = await firebaseReady;
+
+  const countRef = D.ref(db, "counts/" + answer);
+
+  /* Transaction prevents concurrent count overwrites */
+
+  const result = await D.runTransaction(
+    countRef,
+    current => {
+      return (Number(current) || 0) + 1;
+    }
+  );
+
+  if (!result.committed) {
+
+    throw new Error(
+      "Firebase could not save this RSVP count."
+    );
+
+  }
+
+  /* Store attendee registration */
+
+  await D.push(
+    D.ref(db, "registrations"),
+    {
+      name,
+      answer,
+      timestamp: Date.now()
+    }
+  );
+
+}
+
+/* ---------- RSVP LOGIC ---------- */
+
+const nameEl = $('name');
+const msg = $('msg');
+const rb = $('revealBtn');
+
+let myName = "";
+let answered = false;
+
+function afterAnswer(name, answer) {
+
+  myName = name;
+  answered = true;
+
+  nameEl.disabled =
+    $('yes').disabled =
+    $('no').disabled = true;
+
+  msg.textContent =
+    answer === "yes"
+      ? `Awesome ${name}, see you at MOSAIC! 🎉`
+      : `We’ll miss you, ${name}! 🥲 You can still peek.`;
+
+  rb.classList.remove('locked');
+
+}
+
+async function submit(answer) {
+
+  const name = nameEl.value.trim();
+
+  if (!name) {
+
+    nameEl.classList.remove("shake");
+
+    void nameEl.offsetWidth;
+
+    nameEl.classList.add("shake");
+
+    nameEl.focus();
+
+    return;
+
+  }
+
+  $('yes').disabled = $('no').disabled = true;
+
+  try {
+
+    await firebaseReady;
+
+    await saveAnswer(name, answer);
+
+  } catch (e) {
+
+    console.error(e);
+
+    msg.textContent =
+      "Couldn’t save, check your connection.";
+
+    $('yes').disabled = $('no').disabled = false;
+
+    return;
+
+  }
+
+  localStorage.setItem(
+    "fd_done",
+    JSON.stringify({ name, answer })
+  );
+
+  afterAnswer(name, answer);
+
+  burst(
+    answer === "yes" ? "confetti" : "rain",
+    answer === "yes" ? 260 : 60
+  );
+
+}
+
+$('yes').addEventListener('click', () => submit("yes"));
+
+$('no').addEventListener('click', () => submit("no"));
+
+/* Restore previous RSVP in this browser */
+
+const done = JSON.parse(
+  localStorage.getItem("fd_done") || "null"
+);
+
+if (done) {
+
+  nameEl.value = done.name;
+
+  afterAnswer(done.name, done.answer);
+
+}
+
+/* ---------- POSTER REVEAL ---------- */
+
+const reveal = $('reveal');
+
+$('posterWrap').innerHTML =
+  POSTER_FILE.toLowerCase().endsWith(".pdf")
+
+    ? `<iframe src="${POSTER_FILE}#toolbar=0"></iframe>`
+
+    : `<img src="${POSTER_FILE}" alt="MOSAIC 2026 Freshers Day Poster">`;
+
+$('dl').href = POSTER_FILE;
+
+rb.addEventListener('click', () => {
+
+  if (!answered) {
+
+    scrollToFrac(0.62);
+
+    return;
+
+  }
+
+  $('hello').textContent = `Welcome, ${myName}!`;
+
+  document.documentElement.style.overflow = 'hidden';
+
+  reveal.classList.add("show");
+
+  void reveal.offsetWidth;
+
+  setTimeout(() => {
+    reveal.classList.add("open");
+  }, 60);
+
+  setTimeout(() => {
+    burst("confetti", 300);
+  }, 1500);
+
+  setTimeout(() => {
+    burst("confetti", 200);
+  }, 2400);
+
+});
+
+$('close').addEventListener('click', () => {
+
+  reveal.classList.remove("open");
+
+  document.documentElement.style.overflow = '';
+
+  setTimeout(() => {
+    reveal.classList.remove("show");
+  }, 1200);
+
+});
+
+/* ---------- TAB VISIBILITY AND START ---------- */
+
+document.addEventListener('visibilitychange', () => {
+
+  animationRunning = !document.hidden;
+
+  if (animationRunning) {
+
+    clock.getDelta();
+
+    if (parts.length && !running) {
+
+      running = true;
+      loop();
+
+    }
+
+    animate();
+
+  }
+
+});
+
+onWindowResize();
+
 animate();
+
 </script>
-</body>
-</html>
 </body>
 </html>
